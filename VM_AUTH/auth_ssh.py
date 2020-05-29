@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 
 #Для корректной работы скрипта необходимо установить sshpass, pexpect
+#sudo apt install sshpass
+#python3 -m pip install pexpect 
+#соответственно
 #В переменных окружения должен быть указан пароль и логин от билинга, MJ_BILLING_LOGIN & MJ_BILLING_PASSWD соответственно.
 import json
 import os
