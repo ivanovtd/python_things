@@ -45,12 +45,7 @@ def is_domain_name(text):
     return re.match(r".+\..+", text) is not None
 
 
-def get_data():
-    if len(sys.argv) != 2:
-        sys.stderr.write(
-            "syntax: vmip.py vm_name, ip_address or domain_name\n")
-        sys.exit(1)
-    vm = sys.argv[1].strip()
+def get_data(vm):
     vm_ip = None
     vm_name = None
     if is_ip(vm):
@@ -93,3 +88,4 @@ def get_data():
     acc_passwords = json.dumps(xml.vds.get_passwords(vm_name))
     xml.authentication.logout()
     return acc_info, acc_passwords
+
