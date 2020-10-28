@@ -1,17 +1,13 @@
 import string
 import random
-
+import argparse
 LETTERS = string.ascii_letters
 NUMBERS = string.digits
 PUNCTUATION = string.punctuation
 
-def get_password_length():
-    '''Получаем желаемую длину пароля'''
-    length = input("How long do you want your password: ")
-    return int(length)
 
-def generate_password(length = 8):
-    printable = f'{LETTERS}{NUMBERS}{PUNCTUATION}'
+def generate_password(length: int, is_use_punctuation_symbols: bool) -> str:
+    printable = f'{LETTERS}{NUMBERS}{PUNCTUATION}' if is_use_punctuation_symbols else f'{LETTERS}{NUMBERS}' 
     printable = list(printable)
     random.shuffle(printable)
 
@@ -19,4 +15,9 @@ def generate_password(length = 8):
     return ''.join(random_pass)
 
 if __name__ == '__main__':
-    print(generate_password(get_password_length()))
+    parser = argparse.ArgumentParser(description="Password generator by ivanovtd")
+    parser.add_argument("-l", "--length", type=int, help="Enter length of password", default=10)
+    parser.add_argument("-s", help="Use special chars",
+                        action="store_true")
+    args = parser.parse_args()
+    print(generate_password(args.length, args.s))
