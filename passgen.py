@@ -1,6 +1,8 @@
 import string
 import random
 import argparse
+
+
 LETTERS = string.ascii_letters
 NUMBERS = string.digits
 PUNCTUATION = string.punctuation
