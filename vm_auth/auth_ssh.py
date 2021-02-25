@@ -2,7 +2,7 @@
 
 #Для корректной работы скрипта необходимо установить sshpass, pexpect
 #sudo apt install sshpass
-#python3 -m pip install pexpect 
+#python3 -m pip install pexpect
 #соответственно
 #В переменных окружения должен быть указан пароль и логин от билинга, MJ_BILLING_LOGIN & MJ_BILLING_PASSWD соответственно.
 import json
@@ -12,20 +12,25 @@ from pprint import pprint
 import get_vm_data
 import argparse
 
+
+def pass_bf(passwords):
+    root_pass = ''
+    occurences = ['ssh', 'SSH', 'backup', 'backup_account', 'bcp']
+    for password in passwords:
+        for occurence in occurences:
+            if occurence in password['subj'] and password['login'] == 'root':
+                root_pass = password['password']
+    return root_pass
+
+
 def connect_ssh(passwords, ip):
-    #Получаем последний пароль для пользователя root, обращаем внимание, что это также может быть
-    #Пароль от mysql/pgsql/чего угодно, поэтому если не подключается попробуйте ручками.
-    for i in passwords:
-        if i['login'] == 'root':
-            ROOT_PASS = i['password']
-
-    print('Root pass: ' + ROOT_PASS)
-
-    #Авторизация по ssh используя sshpass, в Windows можно изменить на putty, к примеру:
-    """os.system(f'putty -load "{ip}" -l root -pw {ROOT_PASS}')"""
-
+    ROOT_PASS = pass_bf(passwords)
     if ROOT_PASS:
-        os.system(f"sshpass -p {ROOT_PASS} ssh -o StrictHostKeyChecking=no root@{ip}")
+        #Авторизация по ssh используя sshpass, в Windows можно изменить на putty, к примеру:
+        """os.system(f'putty -load "{ip}" -l root -pw {ROOT_PASS}')"""
+        print(f"Connecting to {ip} using password {ROOT_PASS}")
+        os.system(
+            f"sshpass -p {ROOT_PASS} ssh -o StrictHostKeyChecking=no root@{ip}")
     else:
         print("No root password detected")
 
@@ -38,7 +43,6 @@ def main():
     args = parser.parse_args()
     vm = args.vm
     con = args.c
-    
     # Получаем данные
     acc_info, acc_passwords = get_vm_data.get_data(vm)
     # Извлекаем полезную информацию, в частности: ID клиента, ID VPS, IP адрес, пароли и делаем линк в биллинг
@@ -57,6 +61,7 @@ def main():
     #Принтим список паролей, ip, ссылку на биллинг
     print(f"Billing link: https://billing2.intr/client/{client_id}/vds/account/{vm_id}")
     print(f"IP address: {ip}")
+    print(f"ISP Manager: https://{ip}:1500/")
     for pw in passwords:
         pprint(pw)
 
@@ -65,4 +70,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

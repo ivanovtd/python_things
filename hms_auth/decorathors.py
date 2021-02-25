@@ -27,3 +27,16 @@ def get_email_list(get_data):
         email = data['contactInfo']['emailAddresses']
         return email
     return wraper
+
+
+def get_account_id_by_name(get_data):
+    def wraper(self, account):
+        account_list = json.loads(get_data(self, account))
+        for accounts in account_list['content']:
+            if accounts['accountId'] == account:
+                account_id = accounts['id']
+                break
+            else:
+                continue
+        return account_id
+    return wraper

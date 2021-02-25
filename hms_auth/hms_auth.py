@@ -66,11 +66,12 @@ def get_api_data(data) -> [str, str, str]:
     except KeyError:
         print("Check system environment variables MJ_BILLING_LOGIN and MJ_BILLING_PASSWD")
         exit(1)
-
+    account_id = None
     api = API(billing_login, billing_passwd)
     if is_domain(data):
-        data = api.request_domains(data)
-    account_id = re.sub(r'[^0-9.]+', r'', data)
+        account_id = api.request_domains(data.lower())
+    if account_id is None:
+        account_id = api.request_account_id(re.sub(r'[^0-9.]+', r'', data))
     print("AC_" + account_id)
     mail = api.request_user_info(account_id)
     home, web = api.request_unix_account(account_id)
